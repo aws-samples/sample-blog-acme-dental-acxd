@@ -1,0 +1,428 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "Enable connect logging",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": -251.2,
+      "y": 48
+    },
+    "ActionMetadata": {
+      "Agentic voice - Katie": {
+        "position": {
+          "x": 145.6,
+          "y": 41.6
+        },
+        "isFriendlyName": true,
+        "children": [
+          "Agentic voice - Katie-c1x9cqi0FB"
+        ],
+        "parameters": {
+          "TextToSpeechVoice": {
+            "languageCode": "en-US"
+          },
+          "TextToSpeechEngine": {
+            "voiceProvider": "connect:agentic"
+          }
+        },
+        "overrideConsoleVoice": true,
+        "fragments": {
+          "SetContactData": "Agentic voice - Katie-c1x9cqi0FB"
+        },
+        "overrideLanguageAttribute": true
+      },
+      "Agentic voice - Katie-c1x9cqi0FB": {
+        "position": {
+          "x": 145.6,
+          "y": 41.6
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "Record & Analyze IVR - Customer - Agent": {
+        "position": {
+          "x": -98.4,
+          "y": 467.2
+        },
+        "isFriendlyName": true
+      },
+      "Set agent whisper flow": {
+        "position": {
+          "x": -103.2,
+          "y": 232.8
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "EventHooks": {
+            "AgentWhisper": {
+              "displayName": "AcmeDental Agent Whisper"
+            }
+          }
+        },
+        "contactFlow": {
+          "text": "AcmeDental Agent Whisper",
+          "id": "arn:aws:connect:<<REGION>>:<<ACCOUNT_ID>>:instance/<<CONNECT_INSTANCE_ID>>/contact-flow/<<AGENT_WHISPER_FLOW_ID>>"
+        },
+        "customerOrAgent": false
+      },
+      "Enable connect logging": {
+        "position": {
+          "x": -119.2,
+          "y": 45.6
+        },
+        "isFriendlyName": true
+      },
+      "4503e30e-5da9-4594-91c7-d5e9899d8876": {
+        "position": {
+          "x": 908,
+          "y": 263.2
+        }
+      },
+      "9bac69c4-7850-4c0a-83ea-536cb6fe7297": {
+        "position": {
+          "x": 1147.2,
+          "y": 270.4
+        }
+      },
+      "2a11d7ea-67dd-4012-9b9d-04024525bf91": {
+        "position": {
+          "x": 664.8,
+          "y": 264
+        },
+        "parameters": {
+          "QueueId": {
+            "displayName": "BasicQueue"
+          }
+        },
+        "queue": {
+          "text": "BasicQueue"
+        }
+      },
+      "Transferring due to error with ACXD": {
+        "position": {
+          "x": 424.8,
+          "y": 466.4
+        },
+        "isFriendlyName": true
+      },
+      "Goodbye": {
+        "position": {
+          "x": 402.4,
+          "y": 44.8
+        },
+        "isFriendlyName": true
+      },
+      "Provide summary to live agent": {
+        "position": {
+          "x": 424,
+          "y": 264
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "Invoke ACXD - pass in ANI": {
+        "position": {
+          "x": 168,
+          "y": 266.4
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "AgentConfiguration": {
+            "WorkspaceId": {
+              "displayName": "Acme Insurance WS",
+              "useDropdown": "true"
+            },
+            "ContextVariables": {
+              "acmeCallerPhone": {
+                "displayName": "acmeCallerPhone",
+                "useDynamic": true
+              }
+            },
+            "ApplicationId": {
+              "displayName": "acme-dental"
+            },
+            "Alias": {
+              "displayName": "Production"
+            }
+          },
+          "SpeechRecognitionConfiguration": {
+            "SpeechRecognitionEngine": {
+              "displayName": "Amazon Connect agentic voice (recommended)"
+            }
+          },
+          "AudioFillerConfiguration": {
+            "AudioType": {
+              "displayName": "Melody - Curious Crawl"
+            }
+          }
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "AcmeDental Inbound",
+    "description": "Inbound flow for AcmeDental",
+    "type": "contactFlow",
+    "status": "PUBLISHED",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {
+        "TextToSpeechVoice": "KATIE",
+        "TextToSpeechEngine": "connect:agentic"
+      },
+      "Identifier": "Agentic voice - Katie",
+      "Type": "UpdateContactTextToSpeechVoice",
+      "Transitions": {
+        "NextAction": "Agentic voice - Katie-c1x9cqi0FB",
+        "Errors": [
+          {
+            "NextAction": "Invoke ACXD - pass in ANI",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "LanguageCode": "en-US"
+      },
+      "Identifier": "Agentic voice - Katie-c1x9cqi0FB",
+      "Type": "UpdateContactData",
+      "Transitions": {
+        "NextAction": "Invoke ACXD - pass in ANI",
+        "Errors": [
+          {
+            "NextAction": "Invoke ACXD - pass in ANI",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "VoiceBehavior": {
+          "VoiceRecordingBehavior": {
+            "RecordedParticipants": [
+              "Agent",
+              "Customer"
+            ],
+            "IVRRecordingBehavior": "Enabled"
+          },
+          "VoiceAnalyticsBehavior": {
+            "Enabled": "True",
+            "AnalyticsLanguage": "en-US",
+            "AnalyticsModes": [
+              "RealTime",
+              "AutomatedInteraction"
+            ],
+            "ConversationalAnalyticsRedactionConfiguration": {
+              "Enabled": "False"
+            },
+            "SentimentConfiguration": {
+              "Enabled": "True"
+            },
+            "SummaryConfiguration": {
+              "SummaryModes": [
+                "PostContact",
+                "AutomatedInteraction"
+              ]
+            }
+          }
+        }
+      },
+      "Identifier": "Record & Analyze IVR - Customer - Agent",
+      "Type": "UpdateContactRecordingAndAnalyticsBehavior",
+      "Transitions": {
+        "NextAction": "Agentic voice - Katie",
+        "Errors": [
+          {
+            "NextAction": "Agentic voice - Katie",
+            "ErrorType": "NoMatchingError"
+          },
+          {
+            "NextAction": "Agentic voice - Katie",
+            "ErrorType": "ChannelMismatch"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "EventHooks": {
+          "AgentWhisper": "arn:aws:connect:<<REGION>>:<<ACCOUNT_ID>>:instance/<<CONNECT_INSTANCE_ID>>/contact-flow/<<AGENT_WHISPER_FLOW_ID>>"
+        },
+        "EventHooksConfiguration": {
+          "AgentWhisper": {
+            "DisableExecution": "false"
+          }
+        }
+      },
+      "Identifier": "Set agent whisper flow",
+      "Type": "UpdateContactEventHooks",
+      "Transitions": {
+        "NextAction": "Record & Analyze IVR - Customer - Agent",
+        "Errors": [
+          {
+            "NextAction": "Record & Analyze IVR - Customer - Agent",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowLoggingBehavior": "Enabled"
+      },
+      "Identifier": "Enable connect logging",
+      "Type": "UpdateFlowLoggingBehavior",
+      "Transitions": {
+        "NextAction": "Set agent whisper flow"
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "4503e30e-5da9-4594-91c7-d5e9899d8876",
+      "Type": "TransferContactToQueue",
+      "Transitions": {
+        "NextAction": "9bac69c4-7850-4c0a-83ea-536cb6fe7297",
+        "Errors": [
+          {
+            "NextAction": "9bac69c4-7850-4c0a-83ea-536cb6fe7297",
+            "ErrorType": "QueueAtCapacity"
+          },
+          {
+            "NextAction": "9bac69c4-7850-4c0a-83ea-536cb6fe7297",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "9bac69c4-7850-4c0a-83ea-536cb6fe7297",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "QueueId": "arn:aws:connect:<<REGION>>:<<ACCOUNT_ID>>:instance/<<CONNECT_INSTANCE_ID>>/queue/<<QUEUE_ID>>"
+      },
+      "Identifier": "2a11d7ea-67dd-4012-9b9d-04024525bf91",
+      "Type": "UpdateContactTargetQueue",
+      "Transitions": {
+        "NextAction": "4503e30e-5da9-4594-91c7-d5e9899d8876",
+        "Errors": [
+          {
+            "NextAction": "4503e30e-5da9-4594-91c7-d5e9899d8876",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "Let me get you to someone who can help"
+      },
+      "Identifier": "Transferring due to error with ACXD",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "4503e30e-5da9-4594-91c7-d5e9899d8876",
+        "Errors": [
+          {
+            "NextAction": "4503e30e-5da9-4594-91c7-d5e9899d8876",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "Thank you for calling Acme Dental. Goodbye."
+      },
+      "Identifier": "Goodbye",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "9bac69c4-7850-4c0a-83ea-536cb6fe7297",
+        "Errors": [
+          {
+            "NextAction": "9bac69c4-7850-4c0a-83ea-536cb6fe7297",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "whisperSummary": "$.AgenticCX.ContextVariables.whisperSummary"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "Provide summary to live agent",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "2a11d7ea-67dd-4012-9b9d-04024525bf91",
+        "Errors": [
+          {
+            "NextAction": "2a11d7ea-67dd-4012-9b9d-04024525bf91",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Identifier": "Invoke ACXD - pass in ANI",
+      "Type": "ConnectParticipantWithAgenticCX",
+      "Parameters": {
+        "AgentConfiguration": {
+          "WorkspaceId": "<<ACXD_WORKSPACE_ID>>",
+          "ContextVariables": {
+            "acmeCallerPhone": "$.CustomerEndpoint.Address"
+          },
+          "ApplicationId": "<<ACXD_APPLICATION_ID>>",
+          "Alias": "<<ACXD_APPLICATION_ALIAS>>"
+        },
+        "SpeechRecognitionConfiguration": {
+          "SpeechRecognitionEngine": "AMAZON_AGENTIC_VOICE"
+        },
+        "AudioFillerConfiguration": {
+          "Enabled": true,
+          "AudioType": "MELODY_CURIOUS_CRAWL",
+          "StartDelayInMilliseconds": 2500,
+          "MinimumPlayDurationInMilliseconds": 3000,
+          "ResponseDeliveryDelayInMilliseconds": 500
+        }
+      },
+      "Transitions": {
+        "NextAction": "Transferring due to error with ACXD",
+        "Errors": [
+          {
+            "NextAction": "Transferring due to error with ACXD",
+            "ErrorType": "NoMatchingError"
+          },
+          {
+            "NextAction": "Goodbye",
+            "ErrorType": "NoMatchingCondition"
+          },
+          {
+            "NextAction": "Transferring due to error with ACXD",
+            "ErrorType": "InputTimeLimitExceeded"
+          }
+        ],
+        "Conditions": [
+          {
+            "NextAction": "Provide summary to live agent",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "Escalation"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

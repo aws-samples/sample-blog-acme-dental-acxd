@@ -1,0 +1,62 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "Whisper summary to agent",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 74.4,
+      "y": 20
+    },
+    "ActionMetadata": {
+      "95dc2179-0f18-4646-8e15-15377c9cbb29": {
+        "position": {
+          "x": 444.8,
+          "y": 20.8
+        }
+      },
+      "Whisper summary to agent": {
+        "position": {
+          "x": 201.6,
+          "y": 23.2
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "Text": {
+            "useDynamic": true
+          }
+        },
+        "useDynamic": true
+      }
+    },
+    "Annotations": [],
+    "name": "AcmeDental Agent Whisper",
+    "description": "AcmeDental agent whisper played to the agent.",
+    "type": "agentWhisper",
+    "status": "PUBLISHED",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {},
+      "Identifier": "95dc2179-0f18-4646-8e15-15377c9cbb29",
+      "Type": "EndFlowExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "SkipWhenDTMFBufferEnabled": "false",
+        "Text": "$.Attributes.whisperSummary"
+      },
+      "Identifier": "Whisper summary to agent",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "95dc2179-0f18-4646-8e15-15377c9cbb29",
+        "Errors": [
+          {
+            "NextAction": "95dc2179-0f18-4646-8e15-15377c9cbb29",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    }
+  ]
+}

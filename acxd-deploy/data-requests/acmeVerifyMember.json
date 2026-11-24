@@ -1,0 +1,99 @@
+{
+  "dataRequestId": "acmeVerifyMember",
+  "type": "object",
+  "webhook": {
+    "version": "v3",
+    "sendContext": true,
+    "implementation": "external",
+    "method": "POST",
+    "environments": {
+      "production": {
+        "url": "{API_URL_Base:NLX.Secret}/verify/member",
+        "headers": [
+          {
+            "key": "x-api-key",
+            "value": "{API_Key:NLX.Secret}",
+            "dynamic": false,
+            "required": false
+          }
+        ]
+      },
+      "development": {
+        "url": "{API_URL_Base:NLX.Secret}/verify/member",
+        "headers": [
+          {
+            "key": "x-api-key",
+            "value": "{API_Key:NLX.Secret}",
+            "dynamic": false,
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  "description": "Verify a member using DOB with optional memberId",
+  "sensitive": true,
+  "streamStateModifications": false,
+  "requestSchema": {
+    "type": "object",
+    "properties": {
+      "ani": {
+        "type": "string",
+        "isSensitive": true,
+        "title": "",
+        "description": "Member's phone number e164 format"
+      },
+      "dob": {
+        "type": "string",
+        "isSensitive": true,
+        "title": "",
+        "description": "Member's date of birth"
+      },
+      "memberId": {
+        "type": "string",
+        "isSensitive": false,
+        "title": "",
+        "description": "Member's id: MID-1234"
+      }
+    },
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "responseSchema": {
+    "type": "object",
+    "properties": {
+      "memberId": {
+        "type": "string",
+        "isSensitive": false,
+        "title": "",
+        "description": "Member ID format: MID-1234"
+      },
+      "name": {
+        "type": "string",
+        "isSensitive": false,
+        "title": "",
+        "description": "Member's name: John Doe"
+      },
+      "verified": {
+        "type": "boolean",
+        "isSensitive": false,
+        "title": "",
+        "description": "Member found flag"
+      },
+      "zip": {
+        "type": "string",
+        "isSensitive": false,
+        "title": "",
+        "description": "Member's zip code"
+      }
+    },
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

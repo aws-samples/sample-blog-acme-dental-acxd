@@ -1,0 +1,15 @@
+{
+  "name": "handoffSummary",
+  "schema": {
+    "type": "string",
+    "isSensitive": false,
+    "title": "",
+    "description": "Short handoff note written by the Agent handoff summary node and copied here so Amazon Connect can read it."
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

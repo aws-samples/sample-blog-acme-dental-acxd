@@ -1,0 +1,15 @@
+{
+  "name": "acmeMemberId",
+  "schema": {
+    "type": "string",
+    "isSensitive": true,
+    "title": "",
+    "description": "Verified member's ID (MID-####). Set by AcmeStart or AcmeMemberAuth. Read by AcmeMemberJourney."
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

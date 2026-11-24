@@ -1,0 +1,15 @@
+{
+  "name": "acmeMainVisited",
+  "schema": {
+    "type": "string",
+    "isSensitive": false,
+    "title": "",
+    "description": "Set to \"true\" on first AcmeMemberMain visit so return prompts switch to \"Anything else?\""
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

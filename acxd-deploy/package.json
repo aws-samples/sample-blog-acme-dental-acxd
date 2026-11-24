@@ -1,0 +1,36 @@
+{
+  "name": "acxd-deploy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deploy exported Agentic CX Designer flow JSON to a workspace via the ACXD SDK.",
+  "license": "MIT-0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aws-samples/sample-blog-acme-dental-acxd.git",
+    "directory": "acxd-deploy"
+  },
+  "homepage": "https://github.com/aws-samples/sample-blog-acme-dental-acxd#readme",
+  "bugs": {
+    "url": "https://github.com/aws-samples/sample-blog-acme-dental-acxd/issues"
+  },
+  "bin": {
+    "acxd-deploy-flow": "./deploy-flow.mjs"
+  },
+  "scripts": {
+    "deploy": "node deploy-flow.mjs",
+    "dry-run": "node deploy-flow.mjs --dry-run flows/AcmeStart.json",
+    "lint": "eslint .",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "amazon-connect-acxd-sdk": "0.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "eslint": "^9.14.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,812 @@
+{
+  "flowId": "AcmeStart",
+  "nodes": {
+    "214a77b5-2cca-4f33-8cd7-1df318025fe0": {
+      "nodeId": "214a77b5-2cca-4f33-8cd7-1df318025fe0",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000032",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "success"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "ce16e4b8-cd99-4ef6-bc96-68326ca546f2",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "ce16e4b8-cd99-4ef6-bc96-68326ca546f2",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "generative_text",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Convert from text to date",
+        "generativeText": {
+          "modelType": "anthropic.claude-haiku-4-5",
+          "name": "acmeDobFormatted",
+          "prompt": "You are a date-formatting utility inside a customer service application.\n\nTASK\nConvert the input value {acmeDob:NLX.Text}into a calendar date using the exact format YYYY-MM-DD (4-digit year, 2-digit month, 2-digit day, separated by hyphens).\n\nRULES\n- Interpret {acmeDob:NLX.Text}regardless of how it was provided (e.g., \"03151990\", \"March 15 1990\", \"15/03/1990\", \"1990-3-15\", March Fifteenth nineteen ninety).\n- Always zero-pad month and day to two digits and use the full 4-digit year.\n- If the day and month order is ambiguous, assume US order (month first).\n- Do not include any time, timezone, weekday, or extra text.\n- If {acmeDob:NLX.Text}cannot be interpreted as a valid date, output exactly: INVALID\n\nOUTPUT\nReturn only the converted date in YYYY-MM-DD format (or INVALID). No labels, no explanation, no punctuation.",
+          "maxTokens": 4000,
+          "temperature": 0.5
+        }
+      },
+      "canvasMetadata": {
+        "x": 520.3081073009253,
+        "y": 2.3308836398467747,
+        "width": 240,
+        "height": 167,
+        "isMinimized": false
+      }
+    },
+    "5b13b36c-12a8-4882-84b7-ff121c1187b0": {
+      "nodeId": "5b13b36c-12a8-4882-84b7-ff121c1187b0",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000030",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "eq",
+              "left": {
+                "type": "variable",
+                "name": "acmeLookupAni.recordFound"
+              },
+              "right": {
+                "type": "constant",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000060",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "split",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Ani Record found?",
+        "split": {
+          "modelType": "anthropic.claude-sonnet-5"
+        }
+      },
+      "canvasMetadata": {
+        "x": -205.87170135988674,
+        "y": 7.530564064621245,
+        "width": 240,
+        "height": 165,
+        "isMinimized": false
+      }
+    },
+    "77f97adf-024e-4a49-b9f5-b1279d2a9f94": {
+      "nodeId": "77f97adf-024e-4a49-b9f5-b1279d2a9f94",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000060",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "247611fa-c433-4cbd-a122-177eb404cf72",
+          "body": "I could not find your record.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "slot",
+            "name": "acmeDob",
+            "modification": "clear"
+          }
+        ],
+        "name": "No Record Found"
+      },
+      "canvasMetadata": {
+        "x": 1307.407060161076,
+        "y": 166.42359116622237,
+        "width": 240,
+        "height": 193,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000001": {
+      "nodeId": "a0000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000002",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -540.16181323805,
+        "y": 3.7556876812290625,
+        "width": 240,
+        "height": 198,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000002": {
+      "nodeId": "a0000000-0000-4000-8000-000000000002",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000003",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "a0000000-0000-4000-8000-000000000101",
+          "body": "Thank you for contacting Acme Dental. I'm Aria, your AI assistant.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Welcome"
+      },
+      "canvasMetadata": {
+        "x": -540.16181323805,
+        "y": 201.75568768122906,
+        "width": 240,
+        "height": 179,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000003": {
+      "nodeId": "a0000000-0000-4000-8000-000000000003",
+      "childNodes": [
+        {
+          "nodeId": "5b13b36c-12a8-4882-84b7-ff121c1187b0",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "success"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000060",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000060",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "data_request",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "LookupANI",
+        "async": false,
+        "inProgressEnabled": false
+      },
+      "canvasMetadata": {
+        "x": -540.16181323805,
+        "y": 380.75568768122906,
+        "width": 240,
+        "height": 167,
+        "isMinimized": false
+      },
+      "dataRequests": [
+        {
+          "type": "custom",
+          "dataRequestId": "acmeLookupAni",
+          "name": "acmeLookupAni",
+          "payload": {
+            "type": "recursive",
+            "value": {}
+          },
+          "urlParams": {
+            "ani": "{acmeCallerPhone:NLX.Context}"
+          },
+          "headers": {},
+          "alwaysRetrigger": false
+        }
+      ]
+    },
+    "a0000000-0000-4000-8000-000000000030": {
+      "nodeId": "a0000000-0000-4000-8000-000000000030",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000031",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "a0000000-0000-4000-8000-000000000102",
+          "body": "I can see from your caller ID that you're maybe member{acmeLookupAni.record.name:NLX.Variable}. ",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "context",
+            "name": "acmeMemberId",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{acmeLookupAni.record.memberId:NLX.Variable}"
+            }
+          },
+          {
+            "type": "context",
+            "name": "acmeMemberName",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{acmeLookupAni.record.name:NLX.Variable}"
+            }
+          }
+        ],
+        "name": "Personalize + Ask DOB"
+      },
+      "canvasMetadata": {
+        "x": 159.30633421156136,
+        "y": 2.9196052641721337,
+        "width": 240,
+        "height": 251,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000031": {
+      "nodeId": "a0000000-0000-4000-8000-000000000031",
+      "childNodes": [
+        {
+          "nodeId": "214a77b5-2cca-4f33-8cd7-1df318025fe0",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "exists",
+              "left": {
+                "type": "slot",
+                "name": "acmeDob"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "ce16e4b8-cd99-4ef6-bc96-68326ca546f2",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "not_exists",
+              "left": {
+                "type": "slot",
+                "name": "acmeDob"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "user_choice",
+      "messages": [
+        {
+          "messageId": "93e84ae2-fb02-4e7a-abd6-2dd2f4ff0d57",
+          "body": "For verification, please confirm your date of birth?",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Capture DOB (text)",
+        "choice": {
+          "showChoices": false,
+          "multiSelect": false,
+          "choiceDisplayFormat": "dropdown",
+          "associatedSlotTypeIds": [],
+          "idField": "",
+          "labelField": "",
+          "source": "slot",
+          "slotTypeId": "acmeDob",
+          "selectedChoiceLabel": "acmeDob"
+        }
+      },
+      "canvasMetadata": {
+        "x": 159.30633421156136,
+        "y": 253.91960526417213,
+        "width": 240,
+        "height": 258,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000032": {
+      "nodeId": "a0000000-0000-4000-8000-000000000032",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000033",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "success"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "77f97adf-024e-4a49-b9f5-b1279d2a9f94",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "77f97adf-024e-4a49-b9f5-b1279d2a9f94",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "data_request",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "VerifyMemberDOB",
+        "async": false,
+        "inProgressEnabled": false
+      },
+      "canvasMetadata": {
+        "x": 902.9645033204195,
+        "y": 0.9328255167210386,
+        "width": 240,
+        "height": 167,
+        "isMinimized": false
+      },
+      "dataRequests": [
+        {
+          "type": "custom",
+          "dataRequestId": "acmeVerifyMember",
+          "name": "acmeVerifyMember",
+          "payload": {
+            "type": "recursive",
+            "value": {
+              "ani": {
+                "type": "context",
+                "name": "acmeCallerPhone"
+              },
+              "dob": {
+                "type": "local",
+                "name": "acmeDobFormatted"
+              },
+              "memberId": {
+                "type": "constant",
+                "value": ""
+              }
+            }
+          },
+          "urlParams": {},
+          "headers": {},
+          "alwaysRetrigger": true
+        }
+      ]
+    },
+    "a0000000-0000-4000-8000-000000000033": {
+      "nodeId": "a0000000-0000-4000-8000-000000000033",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000034",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "eq",
+              "left": {
+                "type": "variable",
+                "name": "acmeVerifyMember.verified"
+              },
+              "right": {
+                "type": "constant",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "77f97adf-024e-4a49-b9f5-b1279d2a9f94",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "split",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Member verified?",
+        "split": {
+          "modelType": "anthropic.claude-sonnet-5"
+        }
+      },
+      "canvasMetadata": {
+        "x": 1307.407060161076,
+        "y": 1.4235911662223657,
+        "width": 240,
+        "height": 165,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000034": {
+      "nodeId": "a0000000-0000-4000-8000-000000000034",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000035",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "a0000000-0000-4000-8000-000000000103",
+          "body": "Great. {acmeVerifyMember.name:NLX.Variable}, I was able to find your record.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "context",
+            "name": "acmeIsAuthenticated",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "true"
+            }
+          },
+          {
+            "type": "context",
+            "name": "acmeMemberId",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{acmeVerifyMember.memberId:NLX.Variable}"
+            }
+          },
+          {
+            "type": "context",
+            "name": "acmeMemberName",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{acmeVerifyMember.name:NLX.Variable}"
+            }
+          },
+          {
+            "type": "context",
+            "name": "acmeMemberZip",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{acmeVerifyMember.zip:NLX.Variable}"
+            }
+          }
+        ],
+        "name": "Member Verified",
+        "tags": []
+      },
+      "canvasMetadata": {
+        "x": 1719.4122129243847,
+        "y": 0.14959410504457082,
+        "width": 240,
+        "height": 295,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000035": {
+      "nodeId": "a0000000-0000-4000-8000-000000000035",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Go To MemberMain",
+        "redirect": {
+          "id": "AcmeMemberMain",
+          "flowId": "AcmeMemberMain",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 1719.4122129243847,
+        "y": 295.14959410504457,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "a0000000-0000-4000-8000-000000000060": {
+      "nodeId": "a0000000-0000-4000-8000-000000000060",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "MemberAuth Fallback",
+        "redirect": {
+          "id": "AcmeMemberAuth",
+          "flowId": "AcmeMemberAuth",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 1377.979437237402,
+        "y": 1021.7019217655607,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "ce16e4b8-cd99-4ef6-bc96-68326ca546f2": {
+      "nodeId": "ce16e4b8-cd99-4ef6-bc96-68326ca546f2",
+      "childNodes": [
+        {
+          "nodeId": "a0000000-0000-4000-8000-000000000031",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "071bd5c1-d79b-4c9e-bf1e-4ddb80234634",
+          "body": "Invalid date of birth format. Please try again.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "slot",
+            "name": "acmeDob",
+            "modification": "clear"
+          }
+        ],
+        "name": "Invalid DOB Format"
+      },
+      "canvasMetadata": {
+        "x": 899.622331161588,
+        "y": 489.0008181912866,
+        "width": 240,
+        "height": 211,
+        "isMinimized": false
+      }
+    },
+    "fbf303af-9930-4064-913c-cb948fe29c3f": {
+      "nodeId": "fbf303af-9930-4064-913c-cb948fe29c3f",
+      "childNodes": [
+        {
+          "nodeId": "ce16e4b8-cd99-4ef6-bc96-68326ca546f2",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "note",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "",
+        "note": {
+          "titleImage": "For the POC: allow infinite amount of retries.",
+          "body": ""
+        }
+      },
+      "canvasMetadata": {
+        "x": 899.622331161588,
+        "y": 423.0008181912866,
+        "width": 240,
+        "height": 66,
+        "isMinimized": false,
+        "color": "green"
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Entry flow: greet, ANI lookup, ANI-matched happy path (capture DOB + verify) or fall through to caller-type prompt.",
+  "untrained": true,
+  "slotTypes": [
+    {
+      "name": "acmeDob",
+      "type": "NLX.Text",
+      "examples": [
+        "January 1, 1985",
+        "05/14/1972",
+        "12061998",
+        "May fourteenth nineteen seventy two",
+        "December sixth nineteen ninety eight"
+      ],
+      "sensitive": false,
+      "aiDescription": "The caller's date of birth for identity verification.",
+      "multiSelect": false
+    }
+  ],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}

@@ -1,0 +1,284 @@
+{
+  "flowId": "AcmePlanDetails",
+  "nodes": {
+    "047c4781-113a-4fc4-ae5c-28b9debc702a": {
+      "nodeId": "047c4781-113a-4fc4-ae5c-28b9debc702a",
+      "childNodes": [
+        {
+          "nodeId": "c0000000-0000-4000-8000-000000000020",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "eq",
+              "left": {
+                "type": "variable",
+                "name": "acmeGetPlanDetails.found"
+              },
+              "right": {
+                "type": "constant",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "c0000000-0000-4000-8000-000000000099",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "split",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Plan Found?",
+        "split": {
+          "modelType": "anthropic.claude-sonnet-5"
+        }
+      },
+      "canvasMetadata": {
+        "x": -278.44444444444446,
+        "y": 62.91111111111033,
+        "width": 240,
+        "height": 165,
+        "isMinimized": false
+      }
+    },
+    "c0000000-0000-4000-8000-000000000001": {
+      "nodeId": "c0000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "c0000000-0000-4000-8000-000000000010",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -637.3333333333334,
+        "y": 63.99999999999994,
+        "width": 240,
+        "height": 137,
+        "isMinimized": false
+      }
+    },
+    "c0000000-0000-4000-8000-000000000010": {
+      "nodeId": "c0000000-0000-4000-8000-000000000010",
+      "childNodes": [
+        {
+          "nodeId": "047c4781-113a-4fc4-ae5c-28b9debc702a",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "success"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "c0000000-0000-4000-8000-000000000099",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "c0000000-0000-4000-8000-000000000099",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "data_request",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "GetPlanDetails",
+        "async": false,
+        "inProgressEnabled": false
+      },
+      "canvasMetadata": {
+        "x": -637.3333333333334,
+        "y": 200.99999999999994,
+        "width": 240,
+        "height": 167,
+        "isMinimized": false
+      },
+      "dataRequests": [
+        {
+          "type": "custom",
+          "dataRequestId": "acmeGetPlanDetails",
+          "name": "acmeGetPlanDetails",
+          "payload": {
+            "type": "recursive",
+            "value": {}
+          },
+          "urlParams": {
+            "memberId": "{acmeMemberId:NLX.Context}"
+          },
+          "headers": {},
+          "alwaysRetrigger": true
+        }
+      ]
+    },
+    "c0000000-0000-4000-8000-000000000020": {
+      "nodeId": "c0000000-0000-4000-8000-000000000020",
+      "childNodes": [
+        {
+          "nodeId": "c0000000-0000-4000-8000-000000000030",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "c0000000-0000-4000-8000-000000000101",
+          "body": "You're on the {acmeGetPlanDetails.plan:NLX.Variable} plan costing {acmeGetPlanDetails.premium:NLX.Variable} dollars a month.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Plan Information"
+      },
+      "canvasMetadata": {
+        "x": 61.33333333333334,
+        "y": 60,
+        "width": 240,
+        "height": 215,
+        "isMinimized": false
+      }
+    },
+    "c0000000-0000-4000-8000-000000000030": {
+      "nodeId": "c0000000-0000-4000-8000-000000000030",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Go To MemberMain",
+        "redirect": {
+          "id": "AcmeMemberMain",
+          "flowId": "AcmeMemberMain",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 61.33333333333334,
+        "y": 275,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "c0000000-0000-4000-8000-000000000099": {
+      "nodeId": "c0000000-0000-4000-8000-000000000099",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "On Failure/Timeout To Error",
+        "tags": [],
+        "redirect": {
+          "id": "AcmeError",
+          "flowId": "AcmeError",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": -278.44444444444446,
+        "y": 227.91111111111033,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Use when the member asks about their dental plan. Examples: \"what plan am I on\", \"tell me about my plan\", \"what's my premium\", \"what's my plan cost\". ",
+  "untrained": false,
+  "slotTypes": [],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}

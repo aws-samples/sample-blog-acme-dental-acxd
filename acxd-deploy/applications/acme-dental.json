@@ -1,0 +1,92 @@
+{
+  "applicationId": "",
+  "name": "acme-dental",
+  "description": "",
+  "type": "multilingual",
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "deploymentSettings": {
+    "hosting": {
+      "enabled": false
+    },
+    "contextVariables": [],
+    "environment": "production",
+    "oneClickDeployEnabled": false
+  },
+  "interactionMode": "standard",
+  "instanceType": "standard",
+  "flows": [
+    {
+      "flowId": "AcmeStart"
+    },
+    {
+      "flowId": "AcmeLiveAgent"
+    },
+    {
+      "flowId": "AcmeGoodbye"
+    },
+    {
+      "flowId": "AcmeMemberMain"
+    },
+    {
+      "flowId": "AcmeMemberJourney"
+    },
+    {
+      "flowId": "AcmeMemberAuth"
+    },
+    {
+      "flowId": "AcmePlanDetails"
+    },
+    {
+      "flowId": "AcmeError"
+    }
+  ],
+  "settings": {
+    "defaultFlows": {
+      "fallback": {
+        "flowId": "AcmeError"
+      },
+      "unknown": {
+        "flowId": "AcmeError"
+      },
+      "welcome": {
+        "flowId": "AcmeStart"
+      }
+    },
+    "conversationTTL": 5,
+    "thresholds": {
+      "incomprehensionCount": 2
+    },
+    "clusters": {
+      "enabled": false,
+      "frequency": {
+        "count": 1,
+        "resolution": "MONTH"
+      },
+      "phraseThreshold": {
+        "count": 100
+      },
+      "retention": {
+        "count": 30,
+        "resolution": "DAY"
+      }
+    },
+    "guardrails": [],
+    "repeatOnIncomprehension": false,
+    "lifecycleHooks": {},
+    "languageCode": "en-US",
+    "languageCodes": [
+      "en-US"
+    ],
+    "languageSettings": [
+      {
+        "languageCode": "en-US",
+        "useNativeLanguage": true,
+        "useLex3pAsr": false,
+        "region": "global"
+      }
+    ]
+  }
+}

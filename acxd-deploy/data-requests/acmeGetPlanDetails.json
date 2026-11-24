@@ -1,0 +1,130 @@
+{
+  "dataRequestId": "acmeGetPlanDetails",
+  "type": "object",
+  "webhook": {
+    "version": "v3",
+    "sendContext": true,
+    "implementation": "external",
+    "method": "GET",
+    "environments": {
+      "production": {
+        "url": "{API_URL_Base:NLX.Secret}/members/{memberId}/plan",
+        "headers": [
+          {
+            "key": "x-api-key",
+            "value": "{API_Key:NLX.Secret}",
+            "dynamic": false,
+            "required": false
+          }
+        ]
+      },
+      "development": {
+        "url": "{API_URL_Base:NLX.Secret}/members/{memberId}/plan",
+        "headers": [
+          {
+            "key": "x-api-key",
+            "value": "{API_Key:NLX.Secret}",
+            "dynamic": false,
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  "description": "Get plan for the authenticated member",
+  "sensitive": false,
+  "streamStateModifications": false,
+  "requestSchema": {
+    "type": "object",
+    "properties": {},
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "responseSchema": {
+    "type": "object",
+    "properties": {
+      "annualMax": {
+        "type": "number",
+        "isSensitive": false,
+        "title": "",
+        "description": "Annual max payment"
+      },
+      "coverage": {
+        "type": "object",
+        "properties": {
+          "basic": {
+            "type": "number",
+            "isSensitive": false,
+            "title": "",
+            "description": "Basic procedure cost"
+          },
+          "major": {
+            "type": "number",
+            "isSensitive": false,
+            "title": "",
+            "description": "Major procedure cost"
+          },
+          "ortho": {
+            "type": "number",
+            "isSensitive": false,
+            "title": "",
+            "description": "Orthodontist procedure cost"
+          },
+          "preventive": {
+            "type": "number",
+            "isSensitive": false,
+            "title": "",
+            "description": "Preventative maintenance cost"
+          }
+        },
+        "isSensitive": false,
+        "title": "",
+        "description": "Coverage cost"
+      },
+      "deductible": {
+        "type": "number",
+        "isSensitive": false,
+        "title": "",
+        "description": "Deductible amount"
+      },
+      "found": {
+        "type": "boolean",
+        "isSensitive": false,
+        "title": "",
+        "description": "Plan found flag"
+      },
+      "plan": {
+        "type": "string",
+        "isSensitive": false,
+        "title": "",
+        "description": "Plan name"
+      },
+      "premium": {
+        "type": "number",
+        "isSensitive": false,
+        "title": "",
+        "description": "Plan cost"
+      },
+      "remainingAnnualMax": {
+        "type": "number",
+        "isSensitive": false,
+        "title": "",
+        "description": "Remaining amount to annual max payment"
+      },
+      "ytdUsed": {
+        "type": "number",
+        "isSensitive": false,
+        "title": "",
+        "description": "Amount used year to date"
+      }
+    },
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

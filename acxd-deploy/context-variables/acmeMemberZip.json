@@ -1,0 +1,15 @@
+{
+  "name": "acmeMemberZip",
+  "schema": {
+    "type": "string",
+    "isSensitive": true,
+    "title": "",
+    "description": ""
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

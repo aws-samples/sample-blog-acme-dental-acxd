@@ -1,0 +1,71 @@
+{
+  "dataRequestId": "acmeLookupAni",
+  "type": "object",
+  "webhook": {
+    "version": "v3",
+    "sendContext": true,
+    "implementation": "external",
+    "method": "GET",
+    "environments": {
+      "production": {
+        "url": "{API_URL_Base:NLX.Secret}/ani/{ani}",
+        "headers": [
+          {
+            "key": "x-api-key",
+            "value": "{API_Key:NLX.Secret}",
+            "dynamic": false,
+            "required": true
+          }
+        ]
+      }
+    }
+  },
+  "description": "Look up caller by phone (ANI). Member-only POC: returns type (member|unknown) and the member record.",
+  "sensitive": false,
+  "streamStateModifications": false,
+  "requestSchema": {
+    "type": "object",
+    "properties": {},
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "responseSchema": {
+    "type": "object",
+    "properties": {
+      "record": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string",
+            "isSensitive": false,
+            "title": "",
+            "description": "Member ID: MID-1234"
+          },
+          "name": {
+            "type": "string",
+            "isSensitive": false,
+            "title": "",
+            "description": "Member's name"
+          }
+        },
+        "isSensitive": false,
+        "title": "",
+        "description": "Member's record"
+      },
+      "recordFound": {
+        "type": "boolean",
+        "isSensitive": false,
+        "title": "",
+        "description": "true when a member matched the ANI; gate DOB capture on this"
+      }
+    },
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}
