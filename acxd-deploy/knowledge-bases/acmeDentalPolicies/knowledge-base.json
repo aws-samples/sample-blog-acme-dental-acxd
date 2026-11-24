@@ -1,0 +1,31 @@
+{
+  "knowledgeBase": {
+    "knowledgeBaseId": "53582e6e-6610-43a8-9d66-e1c68b864151",
+    "type": "documents",
+    "name": "acmeDentalPolicies",
+    "description": "",
+    "response": {
+      "summarize": true,
+      "minConfidenceScore": 10,
+      "temperature": 1,
+      "topP": 1,
+      "k": 4
+    },
+    "metadataSchema": {
+      "type": "object",
+      "properties": {},
+      "isSensitive": false,
+      "title": "",
+      "description": ""
+    },
+    "mainLanguageCode": "en-US",
+    "languageCodes": [
+      "en-US"
+    ],
+    "metadata": {
+      "path": "",
+      "tags": []
+    }
+  },
+  "articles": []
+}

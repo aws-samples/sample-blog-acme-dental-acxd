@@ -1,0 +1,15 @@
+{
+  "name": "acmeCallerPhone",
+  "schema": {
+    "type": "string",
+    "isSensitive": true,
+    "title": "",
+    "description": "Caller's ANI"
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

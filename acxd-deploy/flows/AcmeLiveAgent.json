@@ -1,0 +1,232 @@
+{
+  "flowId": "AcmeLiveAgent",
+  "nodes": {
+    "068febda-7e81-4ffa-9abe-586af4e6d0d3": {
+      "nodeId": "068febda-7e81-4ffa-9abe-586af4e6d0d3",
+      "childNodes": [
+        {
+          "nodeId": "45bf6336-fe62-42f9-bf38-c4bcb0a7a302",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "context",
+            "name": "whisperSummary",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "Transferring member with no context."
+            }
+          }
+        ],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -9.333333333333314,
+        "y": 405,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "45bf6336-fe62-42f9-bf38-c4bcb0a7a302": {
+      "nodeId": "45bf6336-fe62-42f9-bf38-c4bcb0a7a302",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "escalate",
+      "messages": [
+        {
+          "messageId": "3306fc7e-2d4b-4972-a1c7-c610fe6c32fd",
+          "body": "Let me connect you with a member of our team who can help. I'll pass along what we've covered so you don't have to start over.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": 325.33333333333337,
+        "y": 129.33333333333334,
+        "width": 240,
+        "height": 251,
+        "isMinimized": false
+      }
+    },
+    "c88f3c82-246c-4011-9192-6c06b45aa3f1": {
+      "nodeId": "c88f3c82-246c-4011-9192-6c06b45aa3f1",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "note",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "",
+        "note": {
+          "titleImage": "If generating summary fails, whisper that transfer has no context",
+          "body": ""
+        }
+      },
+      "canvasMetadata": {
+        "x": -10.000000000000227,
+        "y": 506.73333333333335,
+        "width": 240,
+        "height": 90,
+        "isMinimized": false,
+        "color": "green"
+      }
+    },
+    "f0000000-0000-4000-8000-000000000001": {
+      "nodeId": "f0000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "fb54086d-a4cc-4453-94c0-07d3794926e5",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -9.333333333333314,
+        "y": -60,
+        "width": 240,
+        "height": 248,
+        "isMinimized": false
+      }
+    },
+    "fb54086d-a4cc-4453-94c0-07d3794926e5": {
+      "nodeId": "fb54086d-a4cc-4453-94c0-07d3794926e5",
+      "childNodes": [
+        {
+          "nodeId": "45bf6336-fe62-42f9-bf38-c4bcb0a7a302",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "success"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "068febda-7e81-4ffa-9abe-586af4e6d0d3",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "068febda-7e81-4ffa-9abe-586af4e6d0d3",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "generative_text",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "context",
+            "name": "whisperSummary",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{whisperSummary:NLX.Local}"
+            }
+          }
+        ],
+        "name": "Create summary for agent whisper",
+        "generativeText": {
+          "modelType": "amazon-nova-2-lite",
+          "name": "whisperSummary",
+          "prompt": "ROLE AND PERSONA\nYou are a summarization assistant inside a customer service application. You produce a brief \"whisper\" summary that is spoken to a live agent in the moment just before a call is transferred to them. The agent hears this once, hands-free, while the customer is being connected.\n\nTASK\nRead the conversation history provided in CONTEXT and write a single short summary that tells the receiving agent what they need to know to take over the call smoothly. The summary must let the agent continue without asking the customer to repeat information already given.\n\nCapture, when present:\n- Who the customer is (first name only, if stated).\n- The reason for the call / primary intent.\n- What has already been done or attempted in the automated conversation.\n- The specific reason for the transfer (what the customer still needs).\n- Any sentiment or urgency worth flagging (e.g., frustrated, time-sensitive).\n\nGUARDRAILS\n- Keep it to 2-3 sentences, maximum ~45 words. This is spoken aloud, so be brief.\n- Do NOT read back sensitive data: no full card numbers, Social Security Numbers, dates of birth, passwords, or one-time codes. You may say that identity was verified, or reference the last 4 digits only if that was already shared.\n- State only facts supported by the conversation history. Do not invent details, account values, or outcomes.\n- If a detail was not provided, omit it — do not say \"unknown\" or leave placeholders.\n- Write plain prose for text-to-speech: no bullet points, no headings, no emojis, no special characters or markdown.\n\nTONE AND STYLE\n- Professional, neutral, and efficient — agent-to-agent handoff, not customer-facing.\n- Use natural spoken phrasing and contractions.\n- Lead with the intent so the agent gets the point immediately.\n\nEXAMPLE OUTPUT\n\"Transferring Maria. She's calling about a double charge on her latest bill and wants a refund. Identity's verified and I've confirmed the duplicate charge, but the refund is above the automated limit. She's polite but a little frustrated about the wait.\"\n\nCONTEXT\n{System.transcript:NLX.System}\n\nOUTPUT CHECK\nBefore responding, confirm: Is it 3 sentences or fewer and under ~45 words? Does it lead with the intent and state the transfer reason? Is all sensitive data excluded? Is every fact grounded in the conversation history? Output only the summary text, nothing else.",
+          "maxTokens": 4000,
+          "temperature": 0
+        }
+      },
+      "canvasMetadata": {
+        "x": -9.333333333333314,
+        "y": 188,
+        "width": 240,
+        "height": 217,
+        "isMinimized": false
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Use when the caller asks to speak to a human, agent, or representative, or if the caller express frustration or disappointment.",
+  "untrained": false,
+  "slotTypes": [],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}

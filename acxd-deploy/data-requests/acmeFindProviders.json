@@ -1,0 +1,82 @@
+{
+  "dataRequestId": "acmeFindProviders",
+  "type": "object",
+  "webhook": {
+    "version": "v3",
+    "sendContext": true,
+    "implementation": "external",
+    "method": "GET",
+    "environments": {
+      "production": {
+        "url": "{API_URL_Base:NLX.Secret}/providers/search?zip={zip}&specialty={specialty}",
+        "headers": [
+          {
+            "key": "x-api-key",
+            "value": "{API_Key:NLX.Secret}",
+            "dynamic": false,
+            "required": false
+          }
+        ]
+      },
+      "development": {
+        "url": "{API_URL_Base:NLX.Secret}/providers/search?zip={zip}&specialty={specialty}",
+        "headers": [
+          {
+            "key": "x-api-key",
+            "value": "{API_Key:NLX.Secret}",
+            "dynamic": false,
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  "description": "Find in-network dentists near a zip code",
+  "sensitive": false,
+  "streamStateModifications": false,
+  "requestSchema": {
+    "type": "object",
+    "properties": {},
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "responseSchema": {
+    "type": "object",
+    "properties": {
+      "providers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "isSensitive": false,
+              "title": "",
+              "description": "Provider's name"
+            },
+            "practice": {
+              "type": "string",
+              "isSensitive": false,
+              "title": "",
+              "description": "Provider's practice name"
+            }
+          },
+          "isSensitive": false,
+          "title": "",
+          "description": ""
+        },
+        "isSensitive": false,
+        "title": "",
+        "description": "Provider's record"
+      }
+    },
+    "isSensitive": false,
+    "title": "",
+    "description": ""
+  },
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

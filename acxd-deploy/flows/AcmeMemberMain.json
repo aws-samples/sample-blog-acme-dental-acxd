@@ -1,0 +1,280 @@
+{
+  "flowId": "AcmeMemberMain",
+  "nodes": {
+    "1e0f02d8-bce1-4f93-86a3-c6faccdf9833": {
+      "nodeId": "1e0f02d8-bce1-4f93-86a3-c6faccdf9833",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Go to Recognized flow",
+        "redirect": {
+          "id": "{System.capturedFlow:NLX.System}",
+          "flowId": "{System.capturedFlow:NLX.System}",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 401.33333333333326,
+        "y": 158.33333333333326,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "55b46796-0a2b-4928-8973-11e59ad8addb": {
+      "nodeId": "55b46796-0a2b-4928-8973-11e59ad8addb",
+      "childNodes": [
+        {
+          "nodeId": "1e0f02d8-bce1-4f93-86a3-c6faccdf9833",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "exists",
+              "left": {
+                "type": "captured_flow"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "d808c120-0ba9-486e-820a-6888e8253660",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "not_exists",
+              "left": {
+                "type": "captured_flow"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "user_input",
+      "messages": [
+        {
+          "messageId": "2a09e68a-d876-47dc-b692-9396a6e91e10",
+          "body": "How may I assist you today?",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "context",
+            "name": "acmeMainVisited",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "true"
+            }
+          }
+        ],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -329.33333333333337,
+        "y": 337.66666666666663,
+        "width": 240,
+        "height": 197,
+        "isMinimized": false
+      }
+    },
+    "d0000000-0000-4000-8000-000000000001": {
+      "nodeId": "d0000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "d0000000-0000-4000-8000-000000000010",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -329.33333333333337,
+        "y": -53.33333333333334,
+        "width": 240,
+        "height": 248,
+        "isMinimized": false
+      }
+    },
+    "d0000000-0000-4000-8000-000000000010": {
+      "nodeId": "d0000000-0000-4000-8000-000000000010",
+      "childNodes": [
+        {
+          "nodeId": "d70bbf64-3181-4466-a62b-cb58180522a0",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "eq",
+              "left": {
+                "type": "context",
+                "name": "acmeMainVisited"
+              },
+              "right": {
+                "type": "constant",
+                "value": "true"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "55b46796-0a2b-4928-8973-11e59ad8addb",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "split",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Been In Main Before?",
+        "split": {
+          "modelType": "anthropic.claude-sonnet-5"
+        }
+      },
+      "canvasMetadata": {
+        "x": -329.33333333333337,
+        "y": 194.66666666666666,
+        "width": 240,
+        "height": 143,
+        "isMinimized": false
+      }
+    },
+    "d70bbf64-3181-4466-a62b-cb58180522a0": {
+      "nodeId": "d70bbf64-3181-4466-a62b-cb58180522a0",
+      "childNodes": [
+        {
+          "nodeId": "1e0f02d8-bce1-4f93-86a3-c6faccdf9833",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "exists",
+              "left": {
+                "type": "captured_flow"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "d808c120-0ba9-486e-820a-6888e8253660",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "not_exists",
+              "left": {
+                "type": "captured_flow"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "user_input",
+      "messages": [
+        {
+          "messageId": "3507b40d-13e4-4c54-8761-6ce0ca42ffd3",
+          "body": "Is there anything else I can help with today?",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": 18.666666666666657,
+        "y": -54.83333333333346,
+        "width": 240,
+        "height": 165,
+        "isMinimized": false
+      }
+    },
+    "d808c120-0ba9-486e-820a-6888e8253660": {
+      "nodeId": "d808c120-0ba9-486e-820a-6888e8253660",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Fallback - Generative Journey Flow",
+        "redirect": {
+          "id": "AcmeMemberJourney",
+          "flowId": "AcmeMemberJourney",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 401.33333333333314,
+        "y": 326.1666666666667,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Authenticated member landing. Prompts once with the greeting, then on re-entry asks 'anything else?'. Actual intent routing (plan_details -> AcmePlanDetails, everything else -> AcmeMemberJourney) is handled by the Application's default behaviors: Fallback = AcmeMemberJourney, plus AcmePlanDetails utterances trained at the Application level.",
+  "untrained": true,
+  "slotTypes": [],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}

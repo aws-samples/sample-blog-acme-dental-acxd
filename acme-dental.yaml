@@ -1,0 +1,698 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Acme Dental ARIA API (DynamoDB-backed, normalized). Three tables: Members (identity +
+  plan reference), Plans (benefit definitions), Providers (in-network dentist directory,
+  queried by zip). Members reference a planId instead of duplicating benefit data.
+  Member-only POC. Deploy with: --stack-name acme-dental --capabilities CAPABILITY_IAM.
+
+Parameters:
+  StageName:
+    Type: String
+    Default: dev
+    Description: API Gateway stage name
+
+Resources:
+  # ============================================================
+  # Customer-managed KMS key (encrypts the DynamoDB tables at rest)
+  # ============================================================
+  DataKey:
+    Type: AWS::KMS::Key
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Description: !Sub CMK for ${AWS::StackName} DynamoDB tables
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowRootAccountAdmin
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:root
+            Action: 'kms:*'
+            Resource: '*'
+          # Let the CloudWatch Logs service in this region encrypt/decrypt log data with
+          # this CMK. Scoped by encryption context to log groups in this account, so the
+          # key can't be used to read logs from other accounts.
+          - Sid: AllowCloudWatchLogs
+            Effect: Allow
+            Principal:
+              Service: !Sub logs.${AWS::Region}.amazonaws.com
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:Describe*
+            Resource: '*'
+            Condition:
+              ArnLike:
+                kms:EncryptionContext:aws:logs:arn: !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+  DataKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${AWS::StackName}-data
+      TargetKeyId: !Ref DataKey
+
+  # ============================================================
+  # DynamoDB tables
+  # ============================================================
+  MembersTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      TableName: !Sub ${AWS::StackName}-members
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+        KMSMasterKeyId: !Ref DataKey
+      AttributeDefinitions:
+        - AttributeName: memberId
+          AttributeType: S
+        - AttributeName: ani
+          AttributeType: S
+      KeySchema:
+        - AttributeName: memberId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: ani-index
+          KeySchema:
+            - AttributeName: ani
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  PlansTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      TableName: !Sub ${AWS::StackName}-plans
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+        KMSMasterKeyId: !Ref DataKey
+      AttributeDefinitions:
+        - AttributeName: planId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: planId
+          KeyType: HASH
+
+  ProvidersTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      TableName: !Sub ${AWS::StackName}-providers
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+        KMSMasterKeyId: !Ref DataKey
+      AttributeDefinitions:
+        - AttributeName: tin
+          AttributeType: S
+        - AttributeName: ani
+          AttributeType: S
+        - AttributeName: zip
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tin
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: ani-index
+          KeySchema:
+            - AttributeName: ani
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: zip-index
+          KeySchema:
+            - AttributeName: zip
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  # ============================================================
+  # Main handler Lambda (reads from DynamoDB, joins member -> plan)
+  # ============================================================
+  DentalLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess
+      Policies:
+        - PolicyName: dynamo-read
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: dynamodb:GetItem
+                Resource:
+                  - !GetAtt MembersTable.Arn
+                  - !GetAtt PlansTable.Arn
+                  - !GetAtt ProvidersTable.Arn
+              - Effect: Allow
+                Action: dynamodb:Query
+                Resource:
+                  - !Sub '${MembersTable.Arn}/index/*'
+                  - !Sub '${ProvidersTable.Arn}/index/*'
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:GenerateDataKey
+                Resource: !GetAtt DataKey.Arn
+
+  DentalHandlerLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AWS::StackName}-handler
+      RetentionInDays: 14
+      KmsKeyId: !GetAtt DataKey.Arn
+
+  DentalHandlerFn:
+    Type: AWS::Lambda::Function
+    DependsOn: DentalHandlerLogGroup
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-handler
+      Runtime: nodejs24.x
+      Handler: index.handler
+      Role: !GetAtt DentalLambdaRole.Arn
+      Timeout: 10
+      MemorySize: 256
+      ReservedConcurrentExecutions: 10
+      TracingConfig:
+        Mode: Active
+      KmsKeyArn: !GetAtt DataKey.Arn
+      Tags:
+        - Key: Application
+          Value: !Ref AWS::StackName
+        - Key: Component
+          Value: api-handler
+      Environment:
+        Variables:
+          MEMBERS_TABLE: !Ref MembersTable
+          PLANS_TABLE: !Ref PlansTable
+          PROVIDERS_TABLE: !Ref ProvidersTable
+      Code:
+        ZipFile: |
+          const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+          const { DynamoDBDocumentClient, GetCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+          const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+          const MEMBERS_TABLE = process.env.MEMBERS_TABLE;
+          const PLANS_TABLE = process.env.PLANS_TABLE;
+          const PROVIDERS_TABLE = process.env.PROVIDERS_TABLE;
+
+          // In-network dentists live in the Providers table (queried by zip-index).
+          // Coverage percentages, procedure categories, waiting periods and all policy rules
+          // live in the Knowledge Base; member balances live in the Members/Plans tables.
+          // No fee schedule here - cost questions are answered by ARIA from KB + plan data.
+
+          const ok = (b) => ({ statusCode:200, headers:{'content-type':'application/json'}, body:JSON.stringify(b) });
+          const bad = (s,m) => ({ statusCode:s, headers:{'content-type':'application/json'}, body:JSON.stringify({error:m}) });
+          // Normalize any common date form (ISO, US slash, spoken 8-digit MMDDYYYY) to YYYY-MM-DD.
+          const normDob = (s) => { if(!s) return ''; s=String(s).trim(); let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`; m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); if(m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`; const bare=s.replace(/[\s\-\/.]/g,''); if(/^\d{8}$/.test(bare)) return `${bare.slice(4,8)}-${bare.slice(0,2)}-${bare.slice(2,4)}`; const d=new Date(s); return isNaN(d.getTime())?s:d.toISOString().slice(0,10); };
+
+          const getMemberById = async (id) => (await ddb.send(new GetCommand({ TableName: MEMBERS_TABLE, Key: { memberId: id } }))).Item;
+          const getMemberByAni = async (ani) => {
+            const r = await ddb.send(new QueryCommand({ TableName: MEMBERS_TABLE, IndexName:'ani-index', KeyConditionExpression:'ani = :a', ExpressionAttributeValues:{ ':a': ani } }));
+            return (r.Items && r.Items[0]) || undefined;
+          };
+          const getPlan = async (planId) => (await ddb.send(new GetCommand({ TableName: PLANS_TABLE, Key: { planId } }))).Item;
+          const getDentistsByZip = async (zip) => {
+            const r = await ddb.send(new QueryCommand({ TableName: PROVIDERS_TABLE, IndexName:'zip-index', KeyConditionExpression:'zip = :z', ExpressionAttributeValues:{ ':z': zip } }));
+            return r.Items || [];
+          };
+          // Fetch a member and resolve its plan in one go.
+          const getMemberWithPlan = async (id) => {
+            const m = await getMemberById(id);
+            if (!m) return undefined;
+            const plan = m.planId ? await getPlan(m.planId) : undefined;
+            return { ...m, plan };
+          };
+
+          exports.handler = async (event) => {
+            const path = event.resource || event.path;
+            const m = event.httpMethod;
+            const p = event.pathParameters || {};
+            const q = event.queryStringParameters || {};
+            // Log method + route only. Never log the body/path params/query - they carry PII (DOB, phone).
+            console.log('REQ', m, path);
+            try {
+              // Parse body inside the try so a malformed payload returns a structured 400, not a raw 502.
+              let b = {};
+              if (event.body) {
+                try { b = JSON.parse(event.body); }
+                catch (_) { return bad(400, 'invalid JSON body'); }
+              }
+              if (m==='GET' && path==='/ani/{phone}') {
+                const phone = decodeURIComponent(p.phone);
+                const mem = await getMemberByAni(phone);
+                if (mem) return ok({type:'member', recordFound:true, record:{memberId:mem.memberId, name:mem.name}});
+                return ok({type:'unknown', recordFound:false});
+              }
+              if (m==='POST' && path==='/verify/member') {
+                if (!b.memberId && !b.ani) return bad(400,'memberId or ani required');
+                if (!b.dob) return bad(400,'dob required');
+                const mem = b.memberId ? await getMemberById(b.memberId) : await getMemberByAni(b.ani);
+                if (!mem) return ok({verified:false});
+                const v = normDob(b.dob) === normDob(mem.dob);
+                return ok({verified:v, name:v?mem.name:undefined, memberId:v?mem.memberId:undefined, zip:v?mem.zip:undefined});
+              }
+              if (m==='GET' && path==='/members/{memberId}/plan') {
+                const x = await getMemberWithPlan(p.memberId);
+                if (!x || !x.plan) return ok({found:false});
+                return ok({found:true, plan:x.plan.planName, premium:x.plan.premium, coverage:x.plan.coverage, deductible:x.plan.deductible, annualMax:x.plan.annualMax, ytdUsed:x.ytdUsed, remainingAnnualMax:x.plan.annualMax - x.ytdUsed});
+              }
+              if (m==='GET' && path==='/providers/search') {
+                let zip = q.zip;
+                if (!zip && q.memberId) { const mm = await getMemberById(q.memberId); zip = mm && mm.zip; }
+                const items = zip ? await getDentistsByZip(zip) : [];
+                const providers = items.map(d => ({ name:d.name, practice:d.practice })).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+                return ok({providers, count:providers.length, found:providers.length>0, zip:zip||'unknown', specialty:q.specialty||'general'});
+              }
+              if (m==='GET' && path==='/eligibility/{memberId}') {
+                const x = await getMemberWithPlan(p.memberId);
+                if (!x) return bad(404,'member not found');
+                if (!x.plan) return bad(404,'plan not found');
+                return ok({eligible:true, member:{name:x.name, memberId:x.memberId}, plan:x.plan.planName, annualMax:x.plan.annualMax, ytdUsed:x.ytdUsed, deductible:x.plan.deductible, deductibleMet:x.deductibleMet, coverage:x.plan.coverage, waitingPeriods:x.plan.waitingPeriods, implantsRequirePreAuth:true});
+              }
+              if (m==='POST' && path==='/preauth') {
+                if (!b.memberId || !b.toothNumber || !b.procedureCodes) return bad(400,'missing fields');
+                const authId = `PA-${new Date().getUTCFullYear()}-${Math.floor(Math.random()*90000)+10000}`;
+                // Echo back only the known, expected fields - never reflect raw caller input (PII risk).
+                return ok({submitted:true, preAuthId:authId, status:'in_process', expectedTurnaroundDays:10, deliveryChannels:['provider_portal','fax'], summary:{memberId:b.memberId, toothNumber:b.toothNumber, procedureCodes:b.procedureCodes}});
+              }
+              return bad(404, `route not found: ${m} ${path}`);
+            } catch(e) { console.error(e); return bad(500, 'internal error'); }
+          };
+
+  # ============================================================
+  # Seed custom resource (writes demo records on create/update)
+  # ============================================================
+  SeedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess
+      Policies:
+        - PolicyName: dynamo-write
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:BatchWriteItem
+                Resource:
+                  - !GetAtt MembersTable.Arn
+                  - !GetAtt PlansTable.Arn
+                  - !GetAtt ProvidersTable.Arn
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:GenerateDataKey
+                Resource: !GetAtt DataKey.Arn
+
+  SeedFn:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs24.x
+      Handler: index.handler
+      Role: !GetAtt SeedRole.Arn
+      Timeout: 60
+      ReservedConcurrentExecutions: 1
+      TracingConfig:
+        Mode: Active
+      KmsKeyArn: !GetAtt DataKey.Arn
+      Tags:
+        - Key: Application
+          Value: !Ref AWS::StackName
+        - Key: Component
+          Value: seed
+      Environment:
+        Variables:
+          MEMBERS_TABLE: !Ref MembersTable
+          PLANS_TABLE: !Ref PlansTable
+          PROVIDERS_TABLE: !Ref ProvidersTable
+      Code:
+        ZipFile: |
+          const https = require('https');
+          const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+          const { DynamoDBDocumentClient, BatchWriteCommand } = require('@aws-sdk/lib-dynamodb');
+          const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+
+          // Plans hold the benefit definition once; members reference planId.
+          // Plan-level benefit constants per the Acme Dental Sample Benefit Schedule PDF.
+          // Annual max $1,500, $50 individual / $150 family deductible, Major has a
+          // 12-month waiting period for members enrolled less than a year.
+          const PLANS = [
+            { planId:'PPO-ACME', planName:'Acme Dental PPO', premium:35, deductible:50, familyDeductible:150, annualMax:1500, coverage:{preventive:100,basic:80,major:50,ortho:50}, orthoLifetimeMax:1000, majorWaitingPeriodMonths:12 },
+          ];
+          const MEMBERS = [
+            { memberId:'MID-1234', name:'John Doe', dob:'1901-01-01', ani:'+11234567890', zip:'07302', planId:'PPO-ACME', ytdUsed:450, deductibleMet:true, enrolledSince:'2020-01-01' },
+            { memberId:'MID-5521', name:'Jane Doe', dob:'1909-11-09', ani:'+19876543210', zip:'07030', planId:'PPO-ACME', ytdUsed:450, deductibleMet:true, enrolledSince:'2025-03-01' },
+          ];
+          // In-network dentist directory, queried by zip (zip-index). tin is the practice tax ID (9 digits).
+          const PROVIDERS = [
+            { tin:'123456789', zip:'07302', name:'Dr. Sarah Chen', practice:'Jersey City Dental Arts' },
+            { tin:'234567890', zip:'07302', name:'Dr. Marcus Williams', practice:'Jersey City Dental Group' },
+            { tin:'345678901', zip:'07302', name:'Dr. Priya Patel', practice:'Liberty Dental Associates' },
+            { tin:'456789012', zip:'07030', name:'Dr. Emily Nguyen', practice:'Hoboken Smile Studio' },
+            { tin:'567890123', zip:'07030', name:'Dr. David Park', practice:'Washington Street Dental' },
+          ];
+
+          const respond = (event, status, data) => new Promise((resolve, reject) => {
+            const body = JSON.stringify({ Status:status, PhysicalResourceId:event.LogicalResourceId, StackId:event.StackId, RequestId:event.RequestId, LogicalResourceId:event.LogicalResourceId, Data:data||{} });
+            const url = new URL(event.ResponseURL);
+            const req = https.request({ method:'PUT', hostname:url.hostname, path:url.pathname+url.search, headers:{'content-type':'','content-length':body.length}, timeout:10000 }, () => resolve());
+            // Log and reject on callback failure instead of silently resolving - a lost callback hangs the stack for up to an hour.
+            req.on('error', (e) => { console.error('CFN callback failed', e); reject(e); });
+            req.on('timeout', () => { req.destroy(new Error('CFN callback timed out')); });
+            req.write(body); req.end();
+          });
+
+          const writeAll = async (table, items) => {
+            // BatchWrite handles up to 25 items; demo data is small.
+            await ddb.send(new BatchWriteCommand({ RequestItems: { [table]: items.map(Item => ({ PutRequest: { Item } })) } }));
+          };
+
+          exports.handler = async (event) => {
+            try {
+              if (event.RequestType === 'Delete') return respond(event, 'SUCCESS');
+              await writeAll(process.env.PLANS_TABLE, PLANS);
+              await writeAll(process.env.MEMBERS_TABLE, MEMBERS);
+              await writeAll(process.env.PROVIDERS_TABLE, PROVIDERS);
+              return respond(event, 'SUCCESS', { seeded: PLANS.length + MEMBERS.length + PROVIDERS.length });
+            } catch (e) { console.error(e); return respond(event, 'FAILED', { error: e.message }); }
+          };
+
+  SeedCustom:
+    Type: Custom::SeedTables
+    DependsOn:
+      - MembersTable
+      - PlansTable
+      - ProvidersTable
+    Properties:
+      ServiceToken: !GetAtt SeedFn.Arn
+      # Bump this value to force a reseed on stack update.
+      SeedVersion: '4'
+
+  # ============================================================
+  # API Gateway (unchanged routes from the static template)
+  # ============================================================
+  DentalApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub ${AWS::StackName}-api
+      MinimumCompressionSize: 860
+      EndpointConfiguration:
+        Types: [REGIONAL]
+
+  AniRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !GetAtt DentalApi.RootResourceId
+      PathPart: ani
+  AniPhoneRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !Ref AniRes
+      PathPart: '{phone}'
+
+  VerifyRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !GetAtt DentalApi.RootResourceId
+      PathPart: verify
+  VerifyMemberRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !Ref VerifyRes
+      PathPart: member
+
+  MembersRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !GetAtt DentalApi.RootResourceId
+      PathPart: members
+  MembersIdRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !Ref MembersRes
+      PathPart: '{memberId}'
+  MembersPlanRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !Ref MembersIdRes
+      PathPart: plan
+
+  ProvidersRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !GetAtt DentalApi.RootResourceId
+      PathPart: providers
+  ProvidersSearchRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !Ref ProvidersRes
+      PathPart: search
+
+  EligibilityRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !GetAtt DentalApi.RootResourceId
+      PathPart: eligibility
+  EligibilityIdRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !Ref EligibilityRes
+      PathPart: '{memberId}'
+
+  PreauthRes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DentalApi
+      ParentId: !GetAtt DentalApi.RootResourceId
+      PathPart: preauth
+
+  AniMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DentalApi
+      ResourceId: !Ref AniPhoneRes
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DentalHandlerFn.Arn}/invocations
+  VerifyMemberMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DentalApi
+      ResourceId: !Ref VerifyMemberRes
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DentalHandlerFn.Arn}/invocations
+  MembersPlanMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DentalApi
+      ResourceId: !Ref MembersPlanRes
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DentalHandlerFn.Arn}/invocations
+  ProvidersSearchMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DentalApi
+      ResourceId: !Ref ProvidersSearchRes
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DentalHandlerFn.Arn}/invocations
+  EligibilityMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DentalApi
+      ResourceId: !Ref EligibilityIdRes
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DentalHandlerFn.Arn}/invocations
+  PreauthMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DentalApi
+      ResourceId: !Ref PreauthRes
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DentalHandlerFn.Arn}/invocations
+
+  LambdaPerm:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DentalHandlerFn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${DentalApi}/*
+
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - AniMethod
+      - VerifyMemberMethod
+      - MembersPlanMethod
+      - ProvidersSearchMethod
+      - EligibilityMethod
+      - PreauthMethod
+    Properties:
+      RestApiId: !Ref DentalApi
+  # Account-level role letting API Gateway push access/execution logs to CloudWatch.
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayCloudWatchRole.Arn
+  ApiGatewayCloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      LogGroupName: !Sub /aws/apigateway/${AWS::StackName}-access
+      RetentionInDays: 14
+      KmsKeyId: !GetAtt DataKey.Arn
+
+  ApiStage:
+    Type: AWS::ApiGateway::Stage
+    DependsOn: ApiGatewayAccount
+    Properties:
+      RestApiId: !Ref DentalApi
+      DeploymentId: !Ref ApiDeployment
+      StageName: !Ref StageName
+      TracingEnabled: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}'
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          LoggingLevel: ERROR
+          DataTraceEnabled: false
+          MetricsEnabled: true
+
+  DentalApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Sub ${AWS::StackName}-key
+      Enabled: true
+  DentalUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    DependsOn: ApiStage
+    Properties:
+      UsagePlanName: !Sub ${AWS::StackName}-plan
+      ApiStages:
+        - ApiId: !Ref DentalApi
+          Stage: !Ref StageName
+      Throttle:
+        BurstLimit: 50
+        RateLimit: 20
+      Quota:
+        Limit: 10000
+        Period: DAY
+  DentalUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref DentalApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref DentalUsagePlan
+
+Outputs:
+  ApiUrl:
+    Description: Base URL for the Acme Dental API. Save this as an ACXD Secret (name it API_URL_Base).
+    Value: !Sub https://${DentalApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}
+  ApiKeyId:
+    Description: >
+      API key ID. The key value is intentionally NOT output (a CloudFormation Output is
+      readable by anyone with DescribeStacks). Retrieve the value with:
+      aws apigateway get-api-key --api-key <ApiKeyId> --include-value --query value --output text
+    Value: !Ref DentalApiKey
+  MembersTableName:
+    Description: DynamoDB table holding member identity records.
+    Value: !Ref MembersTable
+  PlansTableName:
+    Description: DynamoDB table holding plan/benefit definitions.
+    Value: !Ref PlansTable
+  ProvidersTableName:
+    Description: DynamoDB table holding provider (practice) records.
+    Value: !Ref ProvidersTable

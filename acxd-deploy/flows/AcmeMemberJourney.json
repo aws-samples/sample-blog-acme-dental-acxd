@@ -1,0 +1,288 @@
+{
+  "flowId": "AcmeMemberJourney",
+  "nodes": {
+    "c7a81dfe-123f-4d58-82f8-916bc5cc94f7": {
+      "nodeId": "c7a81dfe-123f-4d58-82f8-916bc5cc94f7",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Goodbye",
+        "redirect": {
+          "id": "AcmeGoodbye",
+          "flowId": "AcmeGoodbye",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 182.66666666666646,
+        "y": 367.49999999999994,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "e0000000-0000-4000-8000-000000000001": {
+      "nodeId": "e0000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "e0000000-0000-4000-8000-000000000002",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -138.66666666666666,
+        "y": -12.666666666666686,
+        "width": 240,
+        "height": 197,
+        "isMinimized": false
+      }
+    },
+    "e0000000-0000-4000-8000-000000000002": {
+      "nodeId": "e0000000-0000-4000-8000-000000000002",
+      "childNodes": [
+        {
+          "nodeId": "c7a81dfe-123f-4d58-82f8-916bc5cc94f7",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "system",
+                "name": "System.gjConditionIndex"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "e0000000-0000-4000-8000-000000000020",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "system",
+                "name": "System.gjConditionIndex"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "e0000000-0000-4000-8000-000000000020",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "e0000000-0000-4000-8000-000000000020",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "generative_journey",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "For Complex Inquiries",
+        "generativeJourney": {
+          "prompt": "You are ARIA, a warm and efficient voice assistant for Acme Dental. You are speaking with an authenticated member.\n\nMember context:\n- Name: {acmeMemberName:NLX.Context}\n- Member ID: {acmeMemberId:NLX.Context}\n- Zip on file: {acmeMemberZip:NLX.Context}\n\nYour job is to help the member with coverage questions, out-of-pocket expectations, and finding providers in their area. Members often ask about several things at once; handle them in one flowing response when you can. \n\nOnce you have provided the complete information to the member, ask them \"Is there anything else I can help with today?\" If the member says \"No\" or says  they are \"Done\", go to the exit \"Goodbye\".\n\nTools available:\n- acmeGetPlanDetails returns the member's plan name, premium, coverage percentages, deductible, deductible-met status, annual maximum, and remaining annual maximum\n- acmeFindProviders returns in-area providers (name and practice) for a zip, plus count and found\n-acmeDentalPolicies knowledge base to lookup procedures, policy and rules\n\nAnswering coverage and cost questions:\n1. Use the knowledge base acmeDentalPolicies for policy and rules: whether a procedure is covered, its benefit category (preventive, basic, major), the plan-pays percentage, frequency or age limits, and waiting periods. For example, a crown is a major service.\n2. Use acmeGetPlanDetails for the member's own numbers: deductible, whether it is met, and remaining annual maximum.\n3. Do not quote a specific dollar out-of-pocket amount; you do not have an allowable-fee schedule. Instead explain coverage plainly, for example: a crown is a major service covered at fifty percent after your deductible, and you have one thousand fifty dollars left on your annual maximum this year. Always frame it as coverage, not a guaranteed price.\n4. If asked for an exact price, say the final amount depends on the dentist's fee, and suggest confirming with the provider or offer a representative.\n\nFinding providers in their area:\n1. When the member asks to find providers, confirm their zip on file first: Would you like providers near your zip on file, {acmeMemberZip:NLX.Context}?\n2. If they confirm, call acmeFindProviders with that zip. If they decline or name a different area, ask for the zip, then call acmeFindProviders with the zip they give.\n3. Infer specialty from the procedure (crown to prosthodontist, cleaning to general).\n4. Read back how many you found and the names, and mention the zip you searched. If found is false or count is zero, say you could not find in-area providers for that zip and offer to try another zip or a representative. Do not mention distances.\n\nCompose one flowing response that addresses everything the member asked. Do not list answers under headings.\n\nVoice tone:\n- Warm, calm, confident\n- Short sentences\n- No filler like Great question or Absolutely\n- Use the member's first name once per conversation, not repeatedly\n- Speak numbers for voice: one thousand fifty dollars, not symbols\n\nEscalate to a human agent if:\n- The member explicitly asks for one\n- The member expresses frustration twice\n- You cannot resolve a request with your tools or the knowledge base\n\nWhen escalating, say: Let me connect you with someone who can help further. Then signal handoff. Go to the exit \"Escalation\".\n\nExample (multi-intent):\nMember: I need a crown on my molar. Is it covered, and can you find providers in my area?\nYou should:\n1. Use the knowledge base acmeDentalPolicies to confirm a crown is a major service, its coverage percentage, and any waiting period.\n2. Call acmeGetPlanDetails for the member's deductible and remaining annual maximum.\n3. Confirm the zip on file, then call acmeFindProviders with specialty prosthodontist.\n4. Compose one answer: coverage for the crown, what that means given their balances (no exact dollar amount), and the providers you found near their zip.\n\nNever fabricate coverage percentages, policy details, provider names, or prices. Use only the knowledge base and tool responses. If the knowledge base has no answer, say so and offer a representative.",
+          "exitConditions": [
+            {
+              "name": "Goodbye",
+              "prompt": "The member says they are done."
+            },
+            {
+              "name": "Escalation",
+              "prompt": "The member asks for a human agent or expresses strong frustration twice."
+            }
+          ],
+          "tools": [
+            {
+              "type": "dataRequest",
+              "dataRequest": {
+                "type": "custom",
+                "dataRequestId": "acmeGetPlanDetails",
+                "payload": {},
+                "params": {
+                  "memberId": {
+                    "type": "value",
+                    "value": {
+                      "type": "context",
+                      "name": "acmeMemberId"
+                    }
+                  }
+                },
+                "headers": {}
+              },
+              "prompt": "Get the member's plan coverage percentages, deductible, and annual max.",
+              "scopeTags": [],
+              "interimMessages": [
+                {
+                  "messageId": "",
+                  "text": "Let me pull up your plan.",
+                  "delay": 0
+                }
+              ]
+            },
+            {
+              "type": "dataRequest",
+              "dataRequest": {
+                "type": "custom",
+                "dataRequestId": "acmeFindProviders",
+                "payload": {},
+                "params": {
+                  "specialty": {
+                    "type": "prompt",
+                    "description": "Specialty like general or prosthodontist. Infer from the procedure."
+                  },
+                  "zip": {
+                    "type": "prompt",
+                    "description": "The caller's zip code, five digits."
+                  }
+                },
+                "headers": {}
+              },
+              "prompt": "Find providers in the member's area near a zip. Ask for zip if not known. Infer specialty from the procedure.",
+              "scopeTags": [],
+              "interimMessages": [
+                {
+                  "messageId": "",
+                  "text": "Let me find providers in your area.",
+                  "delay": 0
+                }
+              ]
+            },
+            {
+              "type": "knowledgeBase",
+              "knowledgeBaseId": "53582e6e-6610-43a8-9d66-e1c68b864151",
+              "prompt": "Look up Acme Dental plan rules in the benefit schedule: procedure code meanings (e.g. D2740 crown, D6010 implant), benefit category and plan-pays percentage, frequency or age limits, waiting periods, deductible and annual-maximum rules, claims, pre-authorization, and appeals. Use for 'is X covered', 'what is the waiting period', 'how often', and similar policy questions. Do not use for the member's own balances or dollar costs.\n",
+              "scopeTags": []
+            }
+          ],
+          "maxTokens": 8192,
+          "maxSteps": 10,
+          "temperature": 0.3,
+          "enableZeroTurnMode": false,
+          "promptVersion": "latest",
+          "modelType": "anthropic.claude-haiku-4-5",
+          "timeout": 60000
+        }
+      },
+      "canvasMetadata": {
+        "x": -138.66666666666666,
+        "y": 184.33333333333331,
+        "width": 240,
+        "height": 375,
+        "isMinimized": false
+      }
+    },
+    "e0000000-0000-4000-8000-000000000020": {
+      "nodeId": "e0000000-0000-4000-8000-000000000020",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Go To LiveAgent",
+        "redirect": {
+          "id": "AcmeLiveAgent",
+          "flowId": "AcmeLiveAgent",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": -138.66666666666666,
+        "y": 559.3333333333333,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Member generative journey: coverage, cost estimates, provider search. Multi-intent capable.",
+  "untrained": false,
+  "slotTypes": [],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}

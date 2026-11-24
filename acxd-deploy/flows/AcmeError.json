@@ -1,0 +1,115 @@
+{
+  "flowId": "AcmeError",
+  "nodes": {
+    "80000000-0000-4000-8000-000000000001": {
+      "nodeId": "80000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "80000000-0000-4000-8000-000000000002",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 258,
+        "isMinimized": false
+      }
+    },
+    "80000000-0000-4000-8000-000000000002": {
+      "nodeId": "80000000-0000-4000-8000-000000000002",
+      "childNodes": [
+        {
+          "nodeId": "ab5cf091-6766-424f-bfbf-0ffe05646415",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "80000000-0000-4000-8000-000000000101",
+          "body": "I'm having trouble.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Error Message"
+      },
+      "canvasMetadata": {
+        "x": 0,
+        "y": 258,
+        "width": 240,
+        "height": 143,
+        "isMinimized": false
+      }
+    },
+    "ab5cf091-6766-424f-bfbf-0ffe05646415": {
+      "nodeId": "ab5cf091-6766-424f-bfbf-0ffe05646415",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "",
+        "redirect": {
+          "id": "AcmeLiveAgent",
+          "flowId": "AcmeLiveAgent",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 0,
+        "y": 401,
+        "width": 240,
+        "height": 111,
+        "isMinimized": false
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Catch-all error flow. Reached when the caller cannot be understood or when a flow reaches a bad state.",
+  "untrained": true,
+  "slotTypes": [],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}

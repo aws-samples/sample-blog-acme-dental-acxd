@@ -1,0 +1,15 @@
+{
+  "name": "acmeIsAuthenticated",
+  "schema": {
+    "type": "string",
+    "isSensitive": false,
+    "title": "",
+    "description": "Flag set to \"true\" by AcmeMemberAuth on successful DOB verification."
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

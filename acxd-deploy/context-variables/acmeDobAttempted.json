@@ -1,0 +1,15 @@
+{
+  "name": "acmeDobAttempted",
+  "schema": {
+    "type": "string",
+    "isSensitive": false,
+    "title": "",
+    "description": "Set to \"true\" once AcmeStart has attempted DOB verification, so AcmeMemberAuth prefixes \"I could not verify that date of birth.\""
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

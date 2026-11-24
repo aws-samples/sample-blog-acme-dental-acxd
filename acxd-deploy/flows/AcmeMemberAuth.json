@@ -1,0 +1,729 @@
+{
+  "flowId": "AcmeMemberAuth",
+  "nodes": {
+    "006e3ba1-ce00-4b78-aa2c-bee820311ddf": {
+      "nodeId": "006e3ba1-ce00-4b78-aa2c-bee820311ddf",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "note",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "",
+        "note": {
+          "titleImage": "For POC, no limit in retries.",
+          "body": ""
+        }
+      },
+      "canvasMetadata": {
+        "x": -90.62797437669468,
+        "y": 670.5240416547458,
+        "width": 240,
+        "height": 42,
+        "isMinimized": false,
+        "color": "green"
+      }
+    },
+    "29ebac67-d70d-4d3c-afa1-fcfe997267e5": {
+      "nodeId": "29ebac67-d70d-4d3c-afa1-fcfe997267e5",
+      "childNodes": [
+        {
+          "nodeId": "674b231d-1f54-4cbd-821e-5c88492fa6e4",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "note",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "",
+        "note": {
+          "titleImage": "For POC, no limit in retries.",
+          "body": ""
+        }
+      },
+      "canvasMetadata": {
+        "x": 598.3099851964919,
+        "y": 394.4789978771081,
+        "width": 240,
+        "height": 42,
+        "isMinimized": false,
+        "color": "green"
+      }
+    },
+    "674b231d-1f54-4cbd-821e-5c88492fa6e4": {
+      "nodeId": "674b231d-1f54-4cbd-821e-5c88492fa6e4",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000050",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "3884cb2c-7ffe-41fd-8989-daef91ac3826",
+          "body": "Invalid date of birth format.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "slot",
+            "name": "acmeDob",
+            "modification": "clear"
+          }
+        ],
+        "name": "Invalid dob"
+      },
+      "canvasMetadata": {
+        "x": 597.4274006096382,
+        "y": 200.68637193915367,
+        "width": 240,
+        "height": 193,
+        "isMinimized": false
+      }
+    },
+    "b0000000-0000-4000-8000-000000000001": {
+      "nodeId": "b0000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000040",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": -90.7345021890045,
+        "y": 22.429093216130752,
+        "width": 240,
+        "height": 197,
+        "isMinimized": false
+      }
+    },
+    "b0000000-0000-4000-8000-000000000040": {
+      "nodeId": "b0000000-0000-4000-8000-000000000040",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000050",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "exists",
+              "left": {
+                "type": "slot",
+                "name": "acmeMemberId"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "d367beed-1b72-4aed-b7b4-96b62fcbb1bf",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "not_exists",
+              "left": {
+                "type": "slot",
+                "name": "acmeMemberId"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "user_choice",
+      "messages": [
+        {
+          "messageId": "c7a52082-5968-40a9-8227-6a22d188cb46",
+          "body": "Can you please provide your member ID starting with M I D?",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Capture Member ID",
+        "choice": {
+          "showChoices": false,
+          "multiSelect": false,
+          "choiceDisplayFormat": "dropdown",
+          "associatedSlotTypeIds": [],
+          "idField": "",
+          "labelField": "",
+          "source": "slot",
+          "slotTypeId": "acmeMemberId",
+          "selectedChoiceLabel": "acmeMemberId"
+        }
+      },
+      "canvasMetadata": {
+        "x": -90.7345021890045,
+        "y": 219.42909321613075,
+        "width": 240,
+        "height": 258,
+        "isMinimized": false
+      }
+    },
+    "b0000000-0000-4000-8000-000000000050": {
+      "nodeId": "b0000000-0000-4000-8000-000000000050",
+      "childNodes": [
+        {
+          "nodeId": "b107f204-5c40-4bf1-a798-441e19b5d026",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "exists",
+              "left": {
+                "type": "slot",
+                "name": "acmeDob"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "674b231d-1f54-4cbd-821e-5c88492fa6e4",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "not_exists",
+              "left": {
+                "type": "slot",
+                "name": "acmeDob"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "user_choice",
+      "messages": [
+        {
+          "messageId": "b0000000-0000-4000-8000-000000000103",
+          "body": "And your date of birth please.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Capture DOB (text)",
+        "choice": {
+          "showChoices": false,
+          "multiSelect": false,
+          "choiceDisplayFormat": "dropdown",
+          "associatedSlotTypeIds": [],
+          "idField": "",
+          "labelField": "",
+          "source": "slot",
+          "slotTypeId": "acmeDob",
+          "selectedChoiceLabel": "acmeDob"
+        }
+      },
+      "canvasMetadata": {
+        "x": 263.209878795877,
+        "y": 29.370540222944413,
+        "width": 240,
+        "height": 240,
+        "isMinimized": false
+      }
+    },
+    "b0000000-0000-4000-8000-000000000060": {
+      "nodeId": "b0000000-0000-4000-8000-000000000060",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000070",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "success"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "ea74dea9-1b28-4e6c-8957-41e52acaf46b",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "ea74dea9-1b28-4e6c-8957-41e52acaf46b",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "data_request",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "VerifyMember dob",
+        "async": false,
+        "inProgressEnabled": false
+      },
+      "canvasMetadata": {
+        "x": 901.8519810400992,
+        "y": 37.05874020448303,
+        "width": 240,
+        "height": 167,
+        "isMinimized": false
+      },
+      "dataRequests": [
+        {
+          "type": "custom",
+          "dataRequestId": "acmeVerifyMember",
+          "name": "acmeVerifyMember",
+          "payload": {
+            "type": "recursive",
+            "value": {
+              "dob": {
+                "type": "local",
+                "name": "acmeDobFormatted"
+              },
+              "memberId": {
+                "type": "slot",
+                "name": "acmeMemberId"
+              }
+            }
+          },
+          "urlParams": {},
+          "headers": {},
+          "alwaysRetrigger": false
+        }
+      ]
+    },
+    "b0000000-0000-4000-8000-000000000070": {
+      "nodeId": "b0000000-0000-4000-8000-000000000070",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000080",
+          "name": "",
+          "conditions": [
+            {
+              "operator": "eq",
+              "left": {
+                "type": "variable",
+                "name": "acmeVerifyMember.verified"
+              },
+              "right": {
+                "type": "constant",
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "ea74dea9-1b28-4e6c-8957-41e52acaf46b",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "split",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Member Verified?",
+        "split": {
+          "modelType": "anthropic.claude-sonnet-5"
+        }
+      },
+      "canvasMetadata": {
+        "x": 1237.4356800792089,
+        "y": 33.430961882915824,
+        "width": 240,
+        "height": 165,
+        "isMinimized": false
+      }
+    },
+    "b0000000-0000-4000-8000-000000000080": {
+      "nodeId": "b0000000-0000-4000-8000-000000000080",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000090",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "b0000000-0000-4000-8000-000000000104",
+          "body": "Great. {acmeVerifyMember.name:NLX.Variable}, I was able to find your record.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "context",
+            "name": "acmeIsAuthenticated",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "true"
+            }
+          },
+          {
+            "type": "context",
+            "name": "acmeMemberId",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{acmeVerifyMember.memberId:NLX.Variable}"
+            }
+          },
+          {
+            "type": "context",
+            "name": "acmeMemberName",
+            "modification": "set",
+            "value": {
+              "type": "constant",
+              "value": "{acmeVerifyMember.name:NLX.Variable}"
+            }
+          },
+          {
+            "type": "context",
+            "name": "acmeMemberZip",
+            "modification": "set",
+            "value": {
+              "type": "variable",
+              "name": "acmeVerifyMember.zip"
+            }
+          }
+        ],
+        "name": "Member Verification Success",
+        "tags": []
+      },
+      "canvasMetadata": {
+        "x": 1552.9991144972828,
+        "y": 35.342470209534156,
+        "width": 240,
+        "height": 295,
+        "isMinimized": false
+      }
+    },
+    "b0000000-0000-4000-8000-000000000090": {
+      "nodeId": "b0000000-0000-4000-8000-000000000090",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Go To MemberMain",
+        "redirect": {
+          "id": "AcmeMemberMain",
+          "flowId": "AcmeMemberMain",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 1879.6572116492835,
+        "y": 38.46594056754901,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "b0000000-0000-4000-8000-000000000099": {
+      "nodeId": "b0000000-0000-4000-8000-000000000099",
+      "childNodes": [
+        {
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "continuation"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "redirect",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Go To LiveAgent",
+        "tags": [],
+        "redirect": {
+          "id": "AcmeLiveAgent",
+          "flowId": "AcmeLiveAgent",
+          "type": "flow"
+        }
+      },
+      "canvasMetadata": {
+        "x": 1237.4356800792089,
+        "y": 359.4309618829158,
+        "width": 240,
+        "height": 127,
+        "isMinimized": false
+      }
+    },
+    "b107f204-5c40-4bf1-a798-441e19b5d026": {
+      "nodeId": "b107f204-5c40-4bf1-a798-441e19b5d026",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000060",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "success"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "674b231d-1f54-4cbd-821e-5c88492fa6e4",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "timeout"
+              }
+            }
+          ]
+        },
+        {
+          "nodeId": "674b231d-1f54-4cbd-821e-5c88492fa6e4",
+          "name": "",
+          "conditions": [
+            {
+              "left": {
+                "type": "node_status"
+              },
+              "operator": "eq",
+              "right": {
+                "type": "constant",
+                "value": "failure"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "generative_text",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Convert from text to date",
+        "generativeText": {
+          "modelType": "anthropic.claude-haiku-4-5",
+          "name": "acmeDobFormatted",
+          "prompt": "You are a date-formatting utility inside a customer service application.\n\nTASK\nConvert the input value {acmeDob:NLX.Text}into a calendar date using the exact format YYYY-MM-DD (4-digit year, 2-digit month, 2-digit day, separated by hyphens).\n\nRULES\n- Interpret {acmeDob:NLX.Text}regardless of how it was provided (e.g., \"03151990\", \"March 15 1990\", \"15/03/1990\", \"1990-3-15\", March Fifteenth nineteen ninety).\n- Always zero-pad month and day to two digits and use the full 4-digit year.\n- If the day and month order is ambiguous, assume US order (month first).\n- Do not include any time, timezone, weekday, or extra text.\n- If {acmeDob:NLX.Text}cannot be interpreted as a valid date, output exactly: INVALID\n\nOUTPUT\nReturn only the converted date in YYYY-MM-DD format (or INVALID). No labels, no explanation, no punctuation.",
+          "maxTokens": 4000,
+          "temperature": 0.5
+        }
+      },
+      "canvasMetadata": {
+        "x": 597.4274006096382,
+        "y": 33.68637193915367,
+        "width": 240,
+        "height": 167,
+        "isMinimized": false
+      }
+    },
+    "d367beed-1b72-4aed-b7b4-96b62fcbb1bf": {
+      "nodeId": "d367beed-1b72-4aed-b7b4-96b62fcbb1bf",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000040",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "85b0b263-8e48-4c3e-abfb-ea53c57db77f",
+          "body": "Invalid member id format.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [
+          {
+            "type": "slot",
+            "name": "acmeMemberId",
+            "modification": "clear"
+          }
+        ],
+        "name": "Invalid memberId"
+      },
+      "canvasMetadata": {
+        "x": -90.7345021890045,
+        "y": 477.42909321613075,
+        "width": 240,
+        "height": 193,
+        "isMinimized": false
+      }
+    },
+    "ea74dea9-1b28-4e6c-8957-41e52acaf46b": {
+      "nodeId": "ea74dea9-1b28-4e6c-8957-41e52acaf46b",
+      "childNodes": [
+        {
+          "nodeId": "b0000000-0000-4000-8000-000000000099",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "fcb11146-d40d-4af4-8d6b-8df21b98dab1",
+          "body": "I could not verify your member ID.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Member Verification failure"
+      },
+      "canvasMetadata": {
+        "x": 1237.4356800792089,
+        "y": 198.43096188291582,
+        "width": 240,
+        "height": 161,
+        "isMinimized": false
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Fallback member auth. Prompts for member ID, reuses DOB if already captured, verifies against backend. One attempt then Live Agent.",
+  "untrained": true,
+  "slotTypes": [
+    {
+      "name": "acmeMemberId",
+      "type": "acmeMemberId",
+      "examples": [
+        "MID-1234",
+        "MID-5521"
+      ],
+      "sensitive": false,
+      "aiDescription": "Acme Dental member identifier, format MID-####.",
+      "multiSelect": false
+    },
+    {
+      "name": "acmeDob",
+      "type": "NLX.Text",
+      "examples": [
+        "May 14, 1972",
+        "November 2, 1985"
+      ],
+      "sensitive": true,
+      "aiDescription": "The caller's date of birth for identity verification.",
+      "multiSelect": false
+    }
+  ],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}

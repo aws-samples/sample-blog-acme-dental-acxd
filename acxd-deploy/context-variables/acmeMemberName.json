@@ -1,0 +1,15 @@
+{
+  "name": "acmeMemberName",
+  "schema": {
+    "type": "string",
+    "isSensitive": true,
+    "title": "",
+    "description": "Verified member's name. Set after DOB verification. Used for personalization."
+  },
+  "disallowExternalModification": true,
+  "type": "text",
+  "metadata": {
+    "path": "",
+    "tags": []
+  }
+}

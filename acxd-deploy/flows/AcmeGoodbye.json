@@ -1,0 +1,94 @@
+{
+  "flowId": "AcmeGoodbye",
+  "nodes": {
+    "90000000-0000-4000-8000-000000000001": {
+      "nodeId": "90000000-0000-4000-8000-000000000001",
+      "childNodes": [
+        {
+          "nodeId": "90000000-0000-4000-8000-000000000002",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "start",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": ""
+      },
+      "canvasMetadata": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 197,
+        "isMinimized": false
+      }
+    },
+    "90000000-0000-4000-8000-000000000002": {
+      "nodeId": "90000000-0000-4000-8000-000000000002",
+      "childNodes": [
+        {
+          "nodeId": "90000000-0000-4000-8000-000000000003",
+          "name": "",
+          "conditions": []
+        }
+      ],
+      "type": "basic",
+      "messages": [
+        {
+          "messageId": "90000000-0000-4000-8000-000000000101",
+          "body": "Please feel free to contact us again if you need anything else. Have a good day.",
+          "type": "text",
+          "skipTranslation": false,
+          "metadata": {
+            "alternatePhrasings": []
+          }
+        }
+      ],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "Farewell"
+      },
+      "canvasMetadata": {
+        "x": 0,
+        "y": 197,
+        "width": 240,
+        "height": 179,
+        "isMinimized": false
+      }
+    },
+    "90000000-0000-4000-8000-000000000003": {
+      "nodeId": "90000000-0000-4000-8000-000000000003",
+      "childNodes": [],
+      "type": "terminate",
+      "messages": [],
+      "modalities": {},
+      "metadata": {
+        "stateModifications": [],
+        "name": "End Conversation"
+      },
+      "canvasMetadata": {
+        "x": 0,
+        "y": 376,
+        "width": 240,
+        "height": 100,
+        "isMinimized": false
+      }
+    }
+  },
+  "description": "",
+  "aiDescription": "Use when the caller says they are done, has no more questions, or says goodbye.",
+  "untrained": false,
+  "slotTypes": [],
+  "metadata": {
+    "path": "",
+    "tags": []
+  },
+  "mainLanguageCode": "en-US",
+  "languageCodes": [
+    "en-US"
+  ],
+  "mirroring": "none"
+}
